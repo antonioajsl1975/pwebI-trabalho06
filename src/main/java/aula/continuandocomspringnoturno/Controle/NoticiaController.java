@@ -26,14 +26,26 @@ public class NoticiaController {
     }
 
     @GetMapping("/listar")
-    public String listar(Model model) throws SQLException {
+    public String listar(Model model, HttpSession session, RedirectAttributes redirectAttributes) throws SQLException {
+
+        Reporter reporterLogado = verificarUsuarioLogado(session, redirectAttributes);
+        if (reporterLogado == null) {
+            return "redirect:/login";
+        }
+
         List<Noticia> lista = noticiaDAO.listAll();
         model.addAttribute("noticias", lista);
         return "noticia/listar";
     }
 
     @GetMapping("/form")
-    public String form(Model model) {
+    public String form(Model model, HttpSession session, RedirectAttributes redirectAttributes) throws SQLException {
+
+        Reporter reporterLogado = verificarUsuarioLogado(session, redirectAttributes);
+        if (reporterLogado == null) {
+            return "redirect:/login";
+        }
+
         if (!model.containsAttribute("noticia")) {
             Noticia noticia = new Noticia();
             model.addAttribute("noticia", noticia);
@@ -43,10 +55,10 @@ public class NoticiaController {
 
     @PostMapping("/inserir")
     public String inserir(@Valid Noticia noticia, BindingResult bindingResult, RedirectAttributes redirectAttributes, HttpSession session) throws SQLException {
-        Reporter reporterLogado = (Reporter) session.getAttribute("usuarioLogado");
 
+        Reporter reporterLogado = verificarUsuarioLogado(session, redirectAttributes);
         if (reporterLogado == null) {
-            return "redirect:/login/form";
+            return "redirect:/login";
         }
 
         if (bindingResult.hasErrors()) {
@@ -69,8 +81,8 @@ public class NoticiaController {
 
     @GetMapping("/editar/{id}")
     public String editar(@PathVariable("id") int id, Model model, RedirectAttributes redirectAttributes, HttpSession session) throws SQLException {
-        Reporter reporterLogado = (Reporter) session.getAttribute("usuarioLogado");
 
+        Reporter reporterLogado = verificarUsuarioLogado(session, redirectAttributes);
         if (reporterLogado == null) {
             return "redirect:/login";
         }
@@ -89,8 +101,8 @@ public class NoticiaController {
 
     @PostMapping("/atualizar")
     public String atualizar(@Valid Noticia noticia, BindingResult bindingResult, RedirectAttributes redirectAttributes, HttpSession session) throws SQLException {
-        Reporter reporterLogado = (Reporter) session.getAttribute("usuarioLogado");
 
+        Reporter reporterLogado = verificarUsuarioLogado(session, redirectAttributes);
         if (reporterLogado == null) {
             return "redirect:/login";
         }
@@ -109,13 +121,10 @@ public class NoticiaController {
             return "redirect:/noticia/listar";
         }
 
-        // Define o repórter logado como autor da notícia
         noticia.setReporter(reporterLogado);
 
-        // Mantém a data original da notícia
         noticia.setData(noticiaExistente.getData());
 
-        // Atualiza a notícia no banco de dados
         noticiaDAO.atualizar(noticia);
 
         redirectAttributes.addFlashAttribute("mensagem", "Notícia atualizada com sucesso.");
@@ -126,8 +135,8 @@ public class NoticiaController {
 
     @GetMapping("/deletar/{id}")
     public String deletar(@PathVariable("id") int id, RedirectAttributes redirectAttributes, HttpSession session) throws SQLException {
-        Reporter reporterLogado = (Reporter) session.getAttribute("usuarioLogado");
 
+        Reporter reporterLogado = verificarUsuarioLogado(session, redirectAttributes);
         if (reporterLogado == null) {
             return "redirect:/login";
         }
@@ -146,5 +155,16 @@ public class NoticiaController {
         redirectAttributes.addFlashAttribute("tipoMensagem", "sucesso");
 
         return "redirect:/noticia/listar";
+    }
+
+    private Reporter verificarUsuarioLogado(HttpSession session, RedirectAttributes redirectAttributes) {
+        Reporter reporterLogado = (Reporter) session.getAttribute("usuarioLogado");
+
+        if (reporterLogado == null) {
+            redirectAttributes.addFlashAttribute("mensagem", "Faça login para continuar.");
+            redirectAttributes.addFlashAttribute("tipoMensagem", "erro");
+        }
+
+        return reporterLogado;
     }
 }

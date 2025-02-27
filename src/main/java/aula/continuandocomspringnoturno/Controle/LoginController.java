@@ -34,7 +34,7 @@ public class LoginController {
 
         if (reporter != null) {
             session.setAttribute("usuarioLogado", reporter);
-            return "redirect:/reporter/listar";
+            return "redirect:/noticia/listar";
         } else {
             redirectAttributes.addFlashAttribute("mensagem", "Login ou senha inválidos.");
             redirectAttributes.addFlashAttribute("tipoMensagem", "erro");
@@ -44,9 +44,10 @@ public class LoginController {
 
     @GetMapping("/logout")
     public String logout(HttpSession session, RedirectAttributes redirectAttributes) {
-        session.invalidate(); // Invalida a sessão do usuário
+        session.invalidate();
         redirectAttributes.addFlashAttribute("mensagem", "Logout realizado com sucesso.");
         redirectAttributes.addFlashAttribute("tipoMensagem", "sucesso");
-        return "redirect:/login"; // Redireciona para a tela de login
+        return "redirect:/login";
     }
+
 }

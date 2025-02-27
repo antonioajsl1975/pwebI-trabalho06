@@ -2,6 +2,7 @@ package aula.continuandocomspringnoturno.Controle;
 
 import aula.continuandocomspringnoturno.Modelo.Dao.ReporterDAOClasse;
 import aula.continuandocomspringnoturno.Modelo.entity.Reporter;
+import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -19,8 +20,7 @@ import java.util.List;
 @RequestMapping("/reporter")
 public class ReporterController {
 
-    public ReporterController() throws SQLException {
-    }
+    public ReporterController() throws SQLException {}
 
     @GetMapping("/form")
     public String form(Model model) {
@@ -44,11 +44,16 @@ public class ReporterController {
         redirectAttributes.addFlashAttribute("mensagem", "Repórter cadastrado com sucesso.");
         redirectAttributes.addFlashAttribute("tipoMensagem", "sucesso");
 
-        return "redirect:/reporter/listar";
+        return "redirect:/login";
     }
 
     @GetMapping("/listar")
-    public String listar(Model model) throws SQLException {
+    public String listar(Model model, HttpSession session, RedirectAttributes redirectAttributes) throws SQLException {
+        Reporter reporterLogado = verificarUsuarioLogado(session, redirectAttributes);
+        if (reporterLogado == null) {
+            return "redirect:/login";
+        }
+
         ReporterDAOClasse dao = new ReporterDAOClasse();
         List<Reporter> lista = dao.buscar();
         model.addAttribute("reporters", lista);
@@ -56,7 +61,18 @@ public class ReporterController {
     }
 
     @GetMapping("/editar/{id}")
-    public String editar(@PathVariable("id") int id, Model model) throws SQLException {
+    public String editar(@PathVariable("id") int id, Model model, HttpSession session, RedirectAttributes redirectAttributes) throws SQLException {
+        Reporter reporterLogado = verificarUsuarioLogado(session, redirectAttributes);
+        if (reporterLogado == null) {
+            return "redirect:/login";
+        }
+
+        if (reporterLogado.getId() != id) {
+            redirectAttributes.addFlashAttribute("mensagem", "Você só pode editar seu próprio usuário.");
+            redirectAttributes.addFlashAttribute("tipoMensagem", "erro");
+            return "redirect:/reporter/listar";
+        }
+
         ReporterDAOClasse dao = new ReporterDAOClasse();
         Reporter reporter = dao.buscar(id);
 
@@ -69,17 +85,22 @@ public class ReporterController {
     }
 
     @PostMapping("/atualizar")
-    public String atualizar(@Valid Reporter reporter, BindingResult bindingResult, RedirectAttributes redirectAttributes) throws SQLException {
+    public String atualizar(@Valid Reporter reporter, BindingResult bindingResult, RedirectAttributes redirectAttributes, HttpSession session) throws SQLException {
+        Reporter reporterLogado = verificarUsuarioLogado(session, redirectAttributes);
+        if (reporterLogado == null) {
+            return "redirect:/login";
+        }
+
+        if (reporter.getId() != reporterLogado.getId()) {
+            redirectAttributes.addFlashAttribute("mensagem", "Você só pode atualizar seu próprio usuário.");
+            redirectAttributes.addFlashAttribute("tipoMensagem", "erro");
+            return "redirect:/reporter/listar";
+        }
+
         if (bindingResult.hasErrors()) {
             redirectAttributes.addFlashAttribute("mensagem", "Erro ao atualizar. Verifique os campos.");
             redirectAttributes.addFlashAttribute("tipoMensagem", "erro");
             return "redirect:/reporter/editar/" + reporter.getId();
-        }
-
-        if (reporter.getId() == 0) {
-            redirectAttributes.addFlashAttribute("mensagem", "ID não encontrado. Não foi possível atualizar.");
-            redirectAttributes.addFlashAttribute("tipoMensagem", "erro");
-            return "redirect:/reporter/listar";
         }
 
         ReporterDAOClasse dao = new ReporterDAOClasse();
@@ -91,17 +112,40 @@ public class ReporterController {
         return "redirect:/reporter/listar";
     }
 
-
     @GetMapping("/deletar/{id}")
-    public String deletar(@PathVariable("id") int id, RedirectAttributes redirectAttributes) throws SQLException {
+    public String deletar(@PathVariable("id") int id, RedirectAttributes redirectAttributes, HttpSession session) throws SQLException {
+        Reporter reporterLogado = verificarUsuarioLogado(session, redirectAttributes);
+        if (reporterLogado == null) {
+            return "redirect:/login";
+        }
+
+        if (reporterLogado.getId() != id) {
+            redirectAttributes.addFlashAttribute("mensagem", "Você só pode excluir seu próprio usuário.");
+            redirectAttributes.addFlashAttribute("tipoMensagem", "erro");
+            return "redirect:/reporter/listar";
+        }
+
         ReporterDAOClasse dao = new ReporterDAOClasse();
         dao.deletar(id);
-        redirectAttributes.addFlashAttribute("mensagem", "Deletado com sucesso.");
+
+        session.invalidate();
+
+        redirectAttributes.addFlashAttribute("mensagem", "Usuário deletado com sucesso.");
         redirectAttributes.addFlashAttribute("tipoMensagem", "sucesso");
 
-        return "redirect:/reporter/listar";
+        return "redirect:/login";
     }
 
+    private Reporter verificarUsuarioLogado(HttpSession session, RedirectAttributes redirectAttributes) {
+        Reporter reporterLogado = (Reporter) session.getAttribute("usuarioLogado");
+
+        if (reporterLogado == null) {
+            redirectAttributes.addFlashAttribute("mensagem", "Faça login para continuar.");
+            redirectAttributes.addFlashAttribute("tipoMensagem", "erro");
+        }
+
+        return reporterLogado;
+    }
 }
 
 

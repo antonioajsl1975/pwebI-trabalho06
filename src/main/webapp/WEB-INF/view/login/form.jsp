@@ -18,7 +18,7 @@
                     <h2 class="card-title text-center mb-4">Login</h2>
 
                     <c:if test="${not empty mensagem}">
-                        <div class="alert alert-danger">
+                        <div class="alert ${tipoMensagem eq 'sucesso' ? 'alert-success' : 'alert-danger'}">
                                 ${mensagem}
                         </div>
                     </c:if>
