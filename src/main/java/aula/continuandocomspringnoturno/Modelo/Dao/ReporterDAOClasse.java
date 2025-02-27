@@ -94,4 +94,23 @@ public class ReporterDAOClasse implements ReporterDaoInterface{
     public void sair() throws SQLException {
         FabricaConexao.fecharConexao();
     }
+
+    @Override
+    public Reporter autenticar(String login, String senha) throws SQLException {
+        String sql = "SELECT * FROM reporter WHERE login = ? AND senha = ? LIMIT 1";
+        PreparedStatement pstm = conexao.prepareStatement(sql);
+        pstm.setString(1, login);
+        pstm.setString(2, senha);
+        ResultSet rs = pstm.executeQuery();
+
+        if (rs.next()) {
+            return new Reporter(
+                    rs.getInt("id"),
+                    rs.getString("nome"),
+                    rs.getString("login"),
+                    rs.getString("senha")
+            );
+        }
+        return null;
+    }
 }

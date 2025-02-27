@@ -12,6 +12,7 @@ public interface ReporterDaoInterface {
     List<Reporter> buscar() throws SQLException;
     void editar(Reporter reporter) throws SQLException;
     void sair() throws SQLException;
+    Reporter autenticar(String login, String senha) throws SQLException;
 }
 
 
