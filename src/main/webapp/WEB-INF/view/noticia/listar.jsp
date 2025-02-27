@@ -39,7 +39,9 @@
                 <td>
                     <c:if test="${usuarioLogado.id == noticia.reporter.id}">
                         <a href="editar/${noticia.id}" class="btn btn-warning btn-sm">Editar</a>
-                        <a href="deletar/${noticia.id}" class="btn btn-danger btn-sm" onclick="return confirm('Tem certeza que deseja excluir?')">Excluir</a>
+                        <a href="${pageContext.request.contextPath}/noticia/deletar/${noticia.id}"
+                           class="btn btn-danger btn-sm"
+                           onclick="return confirm('Tem certeza que deseja excluir?')">Excluir</a>
                     </c:if>
                 </td>
             </tr>
