@@ -1,11 +1,10 @@
 package aula.continuandocomspringnoturno.Modelo.entity;
 
 import java.sql.Timestamp;
-import java.time.LocalDate;
 import java.util.Objects;
 
 public class Noticia {
-    private int id;
+    private Integer id;
     private String titulo;
     private String lide;
     private String corpo;
@@ -15,7 +14,7 @@ public class Noticia {
     public Noticia() {
     }
 
-    public Noticia(int id, String titulo, String lide, String corpo, Timestamp data, Reporter reporter) {
+    public Noticia(Integer id, String titulo, String lide, String corpo, Timestamp data, Reporter reporter) {
         this.id = id;
         this.titulo = titulo;
         this.lide = lide;
@@ -24,11 +23,19 @@ public class Noticia {
         this.reporter = reporter;
     }
 
-    public int getId() {
+    public Noticia(String titulo, String lide, String corpo, Timestamp data, Reporter reporter) {
+        this.titulo = titulo;
+        this.lide = lide;
+        this.corpo = corpo;
+        this.data = data;
+        this.reporter = reporter;
+    }
+
+    public Integer getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
@@ -76,7 +83,7 @@ public class Noticia {
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
         Noticia noticia = (Noticia) o;
-        return id == noticia.id;
+        return Objects.equals(id, noticia.id);
     }
 
     @Override

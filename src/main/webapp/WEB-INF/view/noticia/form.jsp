@@ -7,6 +7,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body class="bg-light">
+<%@ include file="../nav-bar/nav-bar.jsp" %>
 <div class="container mt-5">
     <h2 class="text-center mb-4">${noticia.id == null ? "Nova Notícia" : "Editar Notícia"}</h2>
 
@@ -16,12 +17,12 @@
         </div>
     </c:if>
 
+    <form action="${pageContext.request.contextPath}/noticia/${noticia.id == null ? 'inserir' : 'atualizar'}" method="post">
 
-    <form action="${pageContext.request.contextPath}/noticia/${noticia.id == null ? '/noticia/inserir' : '/noticia/atualizar'}" method="post">
-
-        <c:if test="${noticia.id != null}">
+    <c:if test="${noticia.id != null}">
             <input type="hidden" name="id" value="${noticia.id}">
         </c:if>
+
 
         <div class="mb-3">
             <label class="form-label">Título:</label>

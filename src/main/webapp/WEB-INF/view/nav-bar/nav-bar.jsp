@@ -11,6 +11,9 @@
                 <li class="nav-item"><a class="nav-link" href="#">Mundo</a></li>
                 <li class="nav-item"><a class="nav-link" href="#">Esportes</a></li>
                 <li class="nav-item"><a class="nav-link" href="#">Entretenimento</a></li>
+                <c:if test="${not empty usuarioLogado}">
+                    <li class="nav-item"><a class="nav-link" href="/noticia/listar">Minhas Notícias</a></li>
+                </c:if>
             </ul>
             <ul class="navbar-nav ms-auto">
                 <c:choose>
@@ -24,7 +27,7 @@
                     </c:when>
                     <c:otherwise>
                         <li class="nav-item">
-                            <a class="btn btn-success btn-sm" href="/login">Login</a>
+                            <a class="btn btn-success btn-sm me-2" href="/login">Login</a>
                         </li>
                     </c:otherwise>
                 </c:choose>

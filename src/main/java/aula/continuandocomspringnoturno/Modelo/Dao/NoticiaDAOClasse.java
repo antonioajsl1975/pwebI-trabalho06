@@ -17,13 +17,14 @@ public class NoticiaDAOClasse implements NoticiaDAOInterface {
 
     @Override
     public void inserir(Noticia noticia) throws SQLException {
-        String sql = "INSERT INTO noticia (titulo, lide, corpo, reporter_id) VALUES (?, ?, ?, ?)";
+        String sql = "INSERT INTO noticia (titulo, lide, corpo, reporter_id, data) VALUES (?, ?, ?, ?, ?)";
 
         try (PreparedStatement stmt = conexao.prepareStatement(sql)) {
             stmt.setString(1, noticia.getTitulo());
             stmt.setString(2, noticia.getLide());
             stmt.setString(3, noticia.getCorpo());
             stmt.setInt(4, noticia.getReporter().getId());
+            stmt.setTimestamp(5, new Timestamp(System.currentTimeMillis()));
 
             stmt.executeUpdate();
         }
@@ -32,7 +33,9 @@ public class NoticiaDAOClasse implements NoticiaDAOInterface {
     @Override
     public List<Noticia> listarPorReporter(int idReporter) throws SQLException {
         List<Noticia> noticias = new ArrayList<>();
-        String sql = "SELECT * FROM noticia WHERE reporter_id = ? ORDER BY data DESC";
+        String sql = "SELECT n.id, n.titulo, n.lide, n.corpo, n.data, r.id AS reporter_id, r.nome AS nome_reporter " +
+                "FROM noticia n INNER JOIN reporter r ON n.reporter_id = r.id " +
+                "WHERE n.reporter_id = ? ORDER BY n.data DESC";
 
         try (PreparedStatement stmt = conexao.prepareStatement(sql)) {
             stmt.setInt(1, idReporter);
@@ -46,6 +49,11 @@ public class NoticiaDAOClasse implements NoticiaDAOInterface {
                 noticia.setCorpo(rs.getString("corpo"));
                 noticia.setData(rs.getTimestamp("data"));
 
+                Reporter reporter = new Reporter();
+                reporter.setId(rs.getInt("reporter_id"));
+                reporter.setNome(rs.getString("nome_reporter"));
+
+                noticia.setReporter(reporter);
                 noticias.add(noticia);
             }
         }
@@ -54,7 +62,8 @@ public class NoticiaDAOClasse implements NoticiaDAOInterface {
 
     @Override
     public Noticia buscarPorId(int id) throws SQLException {
-        String sql = "SELECT * FROM noticia WHERE id = ?";
+        String sql = "SELECT n.id, n.titulo, n.lide, n.corpo, n.data, r.id AS reporter_id, r.nome AS nome_reporter " +
+                "FROM noticia n INNER JOIN reporter r ON n.reporter_id = r.id WHERE n.id = ?";
         Noticia noticia = null;
 
         try (PreparedStatement stmt = conexao.prepareStatement(sql)) {
@@ -68,6 +77,12 @@ public class NoticiaDAOClasse implements NoticiaDAOInterface {
                 noticia.setLide(rs.getString("lide"));
                 noticia.setCorpo(rs.getString("corpo"));
                 noticia.setData(rs.getTimestamp("data"));
+
+                Reporter reporter = new Reporter();
+                reporter.setId(rs.getInt("reporter_id"));
+                reporter.setNome(rs.getString("nome_reporter"));
+
+                noticia.setReporter(reporter);
             }
         }
         return noticia;

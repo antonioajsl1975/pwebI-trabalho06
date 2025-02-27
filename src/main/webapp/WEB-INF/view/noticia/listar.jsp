@@ -34,7 +34,7 @@
                 <td>${noticia.id}</td>
                 <td>${noticia.titulo}</td>
                 <td>${noticia.lide}</td>
-                <td>${noticia.dataPublicacao}</td>
+                <td>${noticia.data}</td>
                 <td>${noticia.reporter.nome}</td>
                 <td>
                     <c:if test="${usuarioLogado.id == noticia.reporter.id}">

@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.util.List;
 
 @Controller
@@ -34,7 +35,8 @@ public class NoticiaController {
     @GetMapping("/form")
     public String form(Model model) {
         if (!model.containsAttribute("noticia")) {
-            model.addAttribute("noticia", new Noticia());
+            Noticia noticia = new Noticia();
+            model.addAttribute("noticia", noticia);
         }
         return "noticia/form";
     }
@@ -54,6 +56,9 @@ public class NoticiaController {
         }
 
         noticia.setReporter(reporterLogado);
+
+        noticia.setData(new Timestamp(System.currentTimeMillis()));
+
         noticiaDAO.inserir(noticia);
 
         redirectAttributes.addFlashAttribute("mensagem", "Notícia cadastrada com sucesso.");
@@ -104,7 +109,13 @@ public class NoticiaController {
             return "redirect:/noticia/listar";
         }
 
+        // Define o repórter logado como autor da notícia
         noticia.setReporter(reporterLogado);
+
+        // Mantém a data original da notícia
+        noticia.setData(noticiaExistente.getData());
+
+        // Atualiza a notícia no banco de dados
         noticiaDAO.atualizar(noticia);
 
         redirectAttributes.addFlashAttribute("mensagem", "Notícia atualizada com sucesso.");

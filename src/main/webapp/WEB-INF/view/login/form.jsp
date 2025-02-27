@@ -23,7 +23,7 @@
                         </div>
                     </c:if>
 
-                    <form action="${pageContext.request.contextPath}/login/autenticar" method="post" class="needs-validation" novalidate>
+                    <form action="${pageContext.request.contextPath}/autenticar" method="post" class="needs-validation" novalidate>
                         <div class="mb-3">
                             <label class="form-label">Login:</label>
                             <input type="text" name="login" class="form-control" required>
