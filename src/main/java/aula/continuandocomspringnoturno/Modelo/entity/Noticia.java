@@ -1,5 +1,6 @@
 package aula.continuandocomspringnoturno.Modelo.entity;
 
+import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.util.Objects;
 
@@ -8,13 +9,13 @@ public class Noticia {
     private String titulo;
     private String lide;
     private String corpo;
-    private LocalDate data;
+    private Timestamp data;
     private Reporter reporter;
 
     public Noticia() {
     }
 
-    public Noticia(int id, String titulo, String lide, String corpo, LocalDate data, Reporter reporter) {
+    public Noticia(int id, String titulo, String lide, String corpo, Timestamp data, Reporter reporter) {
         this.id = id;
         this.titulo = titulo;
         this.lide = lide;
@@ -55,11 +56,11 @@ public class Noticia {
         this.corpo = corpo;
     }
 
-    public LocalDate getData() {
+    public Timestamp getData() {
         return data;
     }
 
-    public void setData(LocalDate data) {
+    public void setData(Timestamp data) {
         this.data = data;
     }
 
