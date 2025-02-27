@@ -30,22 +30,18 @@
         </thead>
         <tbody>
         <c:forEach var="noticia" items="${noticias}">
-            <tr>
-                <td>${noticia.id}</td>
-                <td>${noticia.titulo}</td>
-                <td>${noticia.lide}</td>
-                <td>${noticia.data}</td>
-                <td>${noticia.reporter.nome}</td>
-                <td>
-                    <c:if test="${usuarioLogado.id == noticia.reporter.id}">
-                        <a href="editar/${noticia.id}" class="btn btn-warning btn-sm">Editar</a>
-                        <a href="${pageContext.request.contextPath}/noticia/deletar/${noticia.id}"
-                           class="btn btn-danger btn-sm"
-                           onclick="return confirm('Tem certeza que deseja excluir?')">Excluir</a>
-                    </c:if>
-                </td>
-            </tr>
+            <div class="card mb-3">
+                <c:if test="${not empty noticia.imagem}">
+                    <img src="${pageContext.request.contextPath}/imagens/${noticia.imagem}" class="card-img-top" alt="${noticia.titulo}">
+                </c:if>
+                <div class="card-body">
+                    <h5 class="card-title">${noticia.titulo}</h5>
+                    <p class="card-text">${noticia.lide}</p>
+                    <p class="card-text"><small class="text-muted">Autor: ${noticia.reporter.nome}</small></p>
+                </div>
+            </div>
         </c:forEach>
+
         </tbody>
     </table>
 

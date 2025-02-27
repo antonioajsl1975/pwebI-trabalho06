@@ -9,8 +9,11 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.io.File;
+import java.io.IOException;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.List;
@@ -54,11 +57,13 @@ public class NoticiaController {
     }
 
     @PostMapping("/inserir")
-    public String inserir(@Valid Noticia noticia, BindingResult bindingResult, RedirectAttributes redirectAttributes, HttpSession session) throws SQLException {
+    public String inserir(@Valid Noticia noticia, @RequestParam("imagemUpload") MultipartFile imagemUpload,
+                          BindingResult bindingResult, RedirectAttributes redirectAttributes, HttpSession session) throws SQLException {
 
-        Reporter reporterLogado = verificarUsuarioLogado(session, redirectAttributes);
+        Reporter reporterLogado = (Reporter) session.getAttribute("usuarioLogado");
+
         if (reporterLogado == null) {
-            return "redirect:/login";
+            return "redirect:/login/form";
         }
 
         if (bindingResult.hasErrors()) {
@@ -67,10 +72,20 @@ public class NoticiaController {
             return "redirect:/noticia/form";
         }
 
+        if (!imagemUpload.isEmpty()) {
+            String nomeArquivo = System.currentTimeMillis() + "_" + imagemUpload.getOriginalFilename();
+            String caminhoArquivo = "/caminho/para/pasta/imagens/" + nomeArquivo;
+
+            try {
+                imagemUpload.transferTo(new File(caminhoArquivo));
+                noticia.setImagem(nomeArquivo);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
         noticia.setReporter(reporterLogado);
-
         noticia.setData(new Timestamp(System.currentTimeMillis()));
-
         noticiaDAO.inserir(noticia);
 
         redirectAttributes.addFlashAttribute("mensagem", "Notícia cadastrada com sucesso.");
