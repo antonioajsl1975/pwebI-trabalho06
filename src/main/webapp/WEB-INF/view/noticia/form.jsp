@@ -17,7 +17,11 @@
         </div>
     </c:if>
 
-    <form action="${pageContext.request.contextPath}/noticia/inserir" method="post" enctype="multipart/form-data">
+    <form action="${pageContext.request.contextPath}/noticia/${noticia.id == null ? 'inserir' : 'atualizar'}" method="post">
+        <c:if test="${noticia.id != null}">
+            <input type="hidden" name="id" value="${noticia.id}">
+        </c:if>
+
         <div class="mb-3">
             <label class="form-label">Título:</label>
             <input type="text" name="titulo" class="form-control" value="${noticia.titulo}" required>
@@ -33,13 +37,11 @@
             <textarea name="corpo" class="form-control" rows="5" required>${noticia.corpo}</textarea>
         </div>
 
-        <div class="mb-3">
-            <label class="form-label">Imagem:</label>
-            <input type="file" name="imagemUpload" class="form-control">
-        </div>
-
-        <button type="submit" class="btn btn-primary w-100">Publicar Notícia</button>
+        <button type="submit" class="btn btn-primary w-100">
+            ${noticia.id == null ? "Publicar Notícia" : "Atualizar Notícia"}
+        </button>
     </form>
+
 </div>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>

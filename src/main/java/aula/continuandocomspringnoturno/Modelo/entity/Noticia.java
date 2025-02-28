@@ -25,22 +25,14 @@ public class Noticia {
         this.imagem = imagem;
     }
 
-    public Noticia(String titulo, String lide, String corpo, Timestamp data, Reporter reporter) {
-        this.titulo = titulo;
-        this.lide = lide;
-        this.corpo = corpo;
-        this.data = data;
-        this.reporter = reporter;
-    }
 
-    public Noticia(Integer id, String titulo, String lide, String corpo, Timestamp data, Reporter reporter, String imagem) {
+    public Noticia(Integer id, String titulo, String lide, String corpo, Timestamp data, Reporter reporter) {
         this.id = id;
         this.titulo = titulo;
         this.lide = lide;
         this.corpo = corpo;
         this.data = data;
         this.reporter = reporter;
-        this.imagem = imagem;
     }
 
     public Integer getId() {
@@ -89,14 +81,6 @@ public class Noticia {
 
     public void setReporter(Reporter reporter) {
         this.reporter = reporter;
-    }
-
-    public String getImagem() {
-        return imagem;
-    }
-
-    public void setImagem(String imagem) {
-        this.imagem = imagem;
     }
 
     @Override

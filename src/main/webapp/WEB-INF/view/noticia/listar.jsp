@@ -17,35 +17,29 @@
         </div>
     </c:if>
 
-    <table class="table table-striped">
-        <thead>
-        <tr>
-            <th>ID</th>
-            <th>Título</th>
-            <th>Lide</th>
-            <th>Data</th>
-            <th>Repórter</th>
-            <th>Ações</th>
-        </tr>
-        </thead>
-        <tbody>
+    <div class="row">
         <c:forEach var="noticia" items="${noticias}">
-            <div class="card mb-3">
-                <c:if test="${not empty noticia.imagem}">
-                    <img src="${pageContext.request.contextPath}/imagens/${noticia.imagem}" class="card-img-top" alt="${noticia.titulo}">
-                </c:if>
-                <div class="card-body">
-                    <h5 class="card-title">${noticia.titulo}</h5>
-                    <p class="card-text">${noticia.lide}</p>
-                    <p class="card-text"><small class="text-muted">Autor: ${noticia.reporter.nome}</small></p>
+            <div class="col-md-4">
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <h5 class="card-title">${noticia.titulo}</h5>
+                        <p class="card-text">${noticia.lide}</p>
+                        <p class="card-text"><small class="text-muted">Autor: ${noticia.reporter.nome}</small></p>
+
+                        <c:if test="${usuarioLogado != null && usuarioLogado.id == noticia.reporter.id}">
+                            <a href="${pageContext.request.contextPath}/noticia/editar/${noticia.id}" class="btn btn-warning btn-sm">Editar</a>
+                            <a href="${pageContext.request.contextPath}/noticia/deletar/${noticia.id}"
+                               class="btn btn-danger btn-sm"
+                               onclick="return confirm('Tem certeza que deseja excluir esta notícia?');">Excluir</a>
+                        </c:if>
+                    </div>
                 </div>
             </div>
         </c:forEach>
+    </div>
 
-        </tbody>
-    </table>
-
-    <a href="form" class="btn btn-primary">Nova Notícia</a>
+    <a href="${pageContext.request.contextPath}/noticia/form" class="btn btn-primary">Nova Notícia</a>
 </div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

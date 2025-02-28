@@ -17,7 +17,7 @@ public class NoticiaDAOClasse implements NoticiaDAOInterface {
 
     @Override
     public void inserir(Noticia noticia) throws SQLException {
-        String sql = "INSERT INTO noticia (titulo, lide, corpo, reporter_id, data, imagem) VALUES (?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO noticia (titulo, lide, corpo, reporter_id, data) VALUES (?, ?, ?, ?, ?)";
 
         try (PreparedStatement stmt = conexao.prepareStatement(sql)) {
             stmt.setString(1, noticia.getTitulo());
@@ -25,7 +25,6 @@ public class NoticiaDAOClasse implements NoticiaDAOInterface {
             stmt.setString(3, noticia.getCorpo());
             stmt.setInt(4, noticia.getReporter().getId());
             stmt.setTimestamp(5, new Timestamp(System.currentTimeMillis()));
-            stmt.setString(6, noticia.getImagem());
 
             stmt.executeUpdate();
         }
@@ -92,7 +91,7 @@ public class NoticiaDAOClasse implements NoticiaDAOInterface {
     @Override
     public List<Noticia> listAll() throws SQLException {
         List<Noticia> lista = new ArrayList<>();
-        String sql = "SELECT n.id, n.titulo, n.lide, n.corpo, n.data, n.imagem, r.id AS reporter_id, r.nome AS nome_reporter " +
+        String sql = "SELECT n.id, n.titulo, n.lide, n.corpo, n.data, r.id AS reporter_id, r.nome AS nome_reporter " +
                 "FROM noticia n INNER JOIN reporter r ON n.reporter_id = r.id " +
                 "ORDER BY n.data DESC";
 
@@ -106,7 +105,6 @@ public class NoticiaDAOClasse implements NoticiaDAOInterface {
                 noticia.setLide(rs.getString("lide"));
                 noticia.setCorpo(rs.getString("corpo"));
                 noticia.setData(rs.getTimestamp("data"));
-                noticia.setImagem(rs.getString("imagem"));
 
                 Reporter reporter = new Reporter();
                 reporter.setId(rs.getInt("reporter_id"));
@@ -132,6 +130,7 @@ public class NoticiaDAOClasse implements NoticiaDAOInterface {
             stmt.executeUpdate();
         }
     }
+
 
     @Override
     public void deletar(int id) throws SQLException {

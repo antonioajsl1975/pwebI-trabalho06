@@ -57,8 +57,10 @@ public class NoticiaController {
     }
 
     @PostMapping("/inserir")
-    public String inserir(@Valid Noticia noticia, @RequestParam("imagemUpload") MultipartFile imagemUpload,
-                          BindingResult bindingResult, RedirectAttributes redirectAttributes, HttpSession session) throws SQLException {
+    public String inserir(@Valid Noticia noticia,
+                          BindingResult bindingResult,
+                          RedirectAttributes redirectAttributes,
+                          HttpSession session) throws SQLException {
 
         Reporter reporterLogado = (Reporter) session.getAttribute("usuarioLogado");
 
@@ -72,18 +74,6 @@ public class NoticiaController {
             return "redirect:/noticia/form";
         }
 
-        if (!imagemUpload.isEmpty()) {
-            String nomeArquivo = System.currentTimeMillis() + "_" + imagemUpload.getOriginalFilename();
-            String caminhoArquivo = "/caminho/para/pasta/imagens/" + nomeArquivo;
-
-            try {
-                imagemUpload.transferTo(new File(caminhoArquivo));
-                noticia.setImagem(nomeArquivo);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-
         noticia.setReporter(reporterLogado);
         noticia.setData(new Timestamp(System.currentTimeMillis()));
         noticiaDAO.inserir(noticia);
@@ -93,6 +83,7 @@ public class NoticiaController {
 
         return "redirect:/noticia/listar";
     }
+
 
     @GetMapping("/editar/{id}")
     public String editar(@PathVariable("id") int id, Model model, RedirectAttributes redirectAttributes, HttpSession session) throws SQLException {
